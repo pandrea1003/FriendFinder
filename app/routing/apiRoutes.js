@@ -1,56 +1,29 @@
-// ===============================================================================
-// LOAD DATA - From Hot Restraurant Example
-// Linking routes to the friend "data" source.
-// ===============================================================================
-var path = require('path');
-var friends = require("../data/friends.js");
+module.exports = (function() {
+  'use strict';
+  var htmlExternalRoutes = require('express').Router();
+  var path = require("path");
 
-
-// ===============================================================================
-// ROUTING
-// ===============================================================================
-module.exports = function(app) {
-  // API GET Request
-  // ---------------------------------------------------------------------------
-  app.get("/api/friends", function(req, res) {
-    res.json(friends);
+  htmlExternalRoutes.get('/survey', function (req, res) {
+      console.log("Survey.html is active");
+      res.sendFile(path.join(__dirname, "../public/survey.html"));
+  });
+  htmlExternalRoutes.get('/', function (req, res) {
+      console.log("home.html is active");
+      res.sendFile(path.join(__dirname, "../public/home.html"));
   });
 
+  return htmlExternalRoutes;
+})();
 
-  // API POST Requests
-  // Below code handles when a user submits a form and thus submits data to the server.
-  // In each of the below cases, when a user submits form data (a JSON object)
-  // ...the JSON is pushed to the appropriate JavaScript array
-  // (ex. User fills out a reservation request... this data is then sent to the server...
-  // Then the server saves the data to the tableData array)
-  // ---------------------------------------------------------------------------
 
-  app.post("/api/friends", function(req, res) {
-  // will handle the incoming survey results and compatibility logic
-   var userInput = req.body;
-      var userResponse = userInput.scores;
-      var match = {
-        name: "",
-        photo: "",
-        difference: 500
-      };
 
-      for (var i = 0; i < friends.length; i++) {
-        var totalDifference = 0;
-        for (var j = 0; j < userResponse.length; j++) {
-          totalDifference += Math.abs(friends[i].scores[j] - userResponse[j]);
-          
-          if (totalDifference <= match.difference){
-              match.name = friends[i].name;
-              match.photo = friends[i].photo;
-              match.difference = totalDifference;
-          }
-        }
-      }
 
-      friends.push(userInput);
+// var svr = require("../svr.js");
 
-      res.json(match);
+// svr.app.get("/survey", function(req, res) {
+//     res.sendFile(svr.path.join(svr.__dirname, "/public/survey.html"));
+//   });
 
-    });
-  };
+// svr.app.get("*", function(req, res) {
+//     res.sendFile(svr.path.join(svr.__dirname, "/public/home.html"));
+//   });
